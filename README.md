@@ -6,12 +6,24 @@ time tick down — weeks, days, hours, minutes, seconds.
 - **Add / edit / delete** your own countdowns (tap **＋ new**).
 - **Swipe** up/down in a countdown to move between units; tap the dots to jump.
 - **Local only** — every countdown is stored in your browser's `localStorage`
-  on this device. Nothing is uploaded, synced, or shared. Clearing the
-  browser's site data will remove them.
+  on this device. Nothing is uploaded, synced, or shared.
 - All times are interpreted as **local** wall‑clock time.
 
-Single static file (`index.html`) — no build step, no backend. Deployed to
-GitHub Pages via the workflow in `.github/workflows/`.
+## Stack
+
+- **Vite + React** with **Mantine** components (`DatePickerInput` / `TimeInput`
+  in a responsive grid, so the form lays out correctly on every screen size).
+- No backend — a static build deployed to GitHub Pages via the workflow in
+  `.github/workflows/deploy.yml`.
+
+## Develop
+
+```bash
+npm install
+npm run dev      # local dev server
+npm run build    # production build into dist/
+npm run preview  # serve the production build
+```
 
 ## Add to your phone's home screen
 

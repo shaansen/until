@@ -1,0 +1,31 @@
+:root {
+  --green: #3d6b51;
+  --sage: #74b292;
+  --mint: #a8cdb8;
+  --bg: #eef7f0;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--green);
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
+}
+
+/* ── Soft drifting background blobs ── */
+.blob { position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0; }
+.blob-1 { width: 65vw; height: 65vw; background: #cdeede; opacity: .55; top: -15vw; left: -15vw; animation: drift1 18s ease-in-out infinite alternate; }
+.blob-2 { width: 55vw; height: 55vw; background: #d8eecb; opacity: .5;  bottom: -10vw; right: -10vw; animation: drift2 22s ease-in-out infinite alternate; }
+.blob-3 { width: 40vw; height: 40vw; background: #d2f0e6; opacity: .45; top: 35%; left: 30%; animation: drift3 26s ease-in-out infinite alternate; }
+@keyframes drift1 { to { transform: translate(8vw, 6vw) scale(1.1); } }
+@keyframes drift2 { to { transform: translate(-6vw, -8vw) scale(1.08); } }
+@keyframes drift3 { to { transform: translate(5vw, -5vw) scale(0.92); } }
+
+.app-root { position: relative; z-index: 1; height: 100dvh; }
