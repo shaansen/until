@@ -53,12 +53,22 @@ export function timeStringOf(ev) {
 }
 
 export const UNITS = [
-  { key: 'weeks', label: 'weeks', short: 'weeks', divisor: 7 * 86400000 },
-  { key: 'days', label: 'days', short: 'days', divisor: 86400000 },
-  { key: 'hours', label: 'hours', short: 'hours', divisor: 3600000 },
-  { key: 'minutes', label: 'minutes', short: 'mins', divisor: 60000 },
-  { key: 'seconds', label: 'seconds', short: 'secs', divisor: 1000 },
+  { key: 'weeks', label: 'weeks', short: 'weeks', one: 'week', divisor: 7 * 86400000 },
+  { key: 'days', label: 'days', short: 'days', one: 'day', divisor: 86400000 },
+  { key: 'hours', label: 'hours', short: 'hours', one: 'hour', divisor: 3600000 },
+  { key: 'minutes', label: 'minutes', short: 'mins', one: 'minute', divisor: 60000 },
+  { key: 'seconds', label: 'seconds', short: 'secs', one: 'second', divisor: 1000 },
 ];
+
+// What's left over after the whole units at `index`, expressed in the next unit
+// down. Returns null for the smallest unit, which has nothing below it, and an
+// empty string at zero — the line keeps its space so nothing shifts.
+export function remainderBelow(diff, index) {
+  const next = UNITS[index + 1];
+  if (!next) return null;
+  const v = Math.floor((diff % UNITS[index].divisor) / next.divisor);
+  return v === 0 ? '' : `${fmt(v)} ${v === 1 ? next.one : next.label}`;
+}
 
 export function fmt(n) {
   return Math.floor(n).toLocaleString('en-US');
