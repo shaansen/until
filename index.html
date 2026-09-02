@@ -14,6 +14,25 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23eef7f0'/><text x='50' y='63' text-anchor='middle' font-family='Helvetica,Arial,sans-serif' font-weight='700' font-size='58' fill='%23356b4e'>u</text><rect x='26' y='74' width='48' height='9' rx='4.5' fill='%23cfe4d7'/><rect x='26' y='74' width='30' height='9' rx='4.5' fill='%235fa57e'/></svg>" />
   <meta name="theme-color" content="#eef7f0" />
 
+  <script>
+    // A home-screen web app can hold on to this HTML long after a deploy has
+    // replaced the hashed bundle it names, and the old bundle is gone, so the
+    // page renders nothing at all. Catch that failing script or stylesheet and
+    // reload once with the HTTP cache bypassed instead of sitting on a blank
+    // screen. The flag keeps a genuinely broken deploy from looping.
+    window.addEventListener('error', function (e) {
+      var el = e.target;
+      if (!el || (el.tagName !== 'SCRIPT' && el.tagName !== 'LINK')) return;
+      try {
+        if (sessionStorage.getItem('until.staleReload')) return;
+        sessionStorage.setItem('until.staleReload', '1');
+      } catch (err) { return; }
+      fetch(location.href, { cache: 'reload' }).then(function () {
+        location.replace(location.href);
+      }, function () {});
+    }, true);
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />

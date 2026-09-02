@@ -29,6 +29,10 @@ page. Keep it that way when editing those two files.
 - No backend: a static build deployed to GitHub Pages via the workflow in
   `.github/workflows/deploy.yml`. `base` in `vite.config.js` must match the
   repo name (`/until/`).
+- Each deploy emits a new hashed bundle and deletes the old one, so a home
+  screen web app sitting on cached HTML would load a script that is no longer
+  there and show a blank page. The inline guard in `index.html` catches that
+  failed load and reloads once with the cache bypassed.
 
 ## Develop
 
