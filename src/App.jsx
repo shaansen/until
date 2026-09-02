@@ -89,7 +89,7 @@ export default function App() {
         <Container size="xs" pt="xl" pb={120} px="md">
           <Stack gap={4} align="center" mb="xl" mt="sm">
             <Title order={1} style={{ fontSize: 'clamp(2rem, 9vw, 2.7rem)', letterSpacing: '-0.025em' }}>
-              Countdowns
+              until
             </Title>
             <Text size="xs" fw={500} c="green.6" style={{ letterSpacing: '0.18em', textTransform: 'uppercase' }}>
               every moment, on its way

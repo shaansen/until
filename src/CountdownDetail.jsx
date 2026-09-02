@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { ActionIcon } from '@mantine/core';
 import { IconChevronLeft, IconPencil } from '@tabler/icons-react';
-import { UNITS, targetDate, fmt, unitTotal, unitValues } from './storage.js';
+import { UNITS, targetDate, fmt, unitTotal, unitValues, remainderBelow } from './storage.js';
 import './CountdownDetail.css';
 
 export default function CountdownDetail({ event, onBack, onEdit }) {
@@ -35,8 +35,9 @@ export default function CountdownDetail({ event, onBack, onEdit }) {
   }, []);
 
   const current = visible[Math.min(pos, visible.length - 1)] ?? UNITS.length - 1;
-  const { value: currentValue, label, rest } = unitValues(current, now, target);
+  const { value: currentValue, label } = unitValues(current, now, target);
   const value = fmt(currentValue);
+  const sub = remainderBelow(current, now, target);
 
   // Fit the big number to the screen.
   useLayoutEffect(() => {
@@ -115,7 +116,7 @@ export default function CountdownDetail({ event, onBack, onEdit }) {
             <div className="unit-card" key={current} data-dir={dir}>
               <div className="ornament">{label}</div>
               <div className="big-num" style={{ fontSize: `${fontSize}px` }}>{value}</div>
-              {rest && <div className="remainder">{fmt(rest.v)} {rest.label}</div>}
+              {sub !== null && <div className="sub-num">{sub}</div>}
             </div>
 
             <div className={`chevron bottom ${pos >= visible.length - 1 ? 'hidden' : ''}`}>

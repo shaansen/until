@@ -1,8 +1,8 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// Project site lives at https://shaansen.github.io/ead-approval-countdown/
+// Project site lives at https://shaansen.github.io/until/
 export default defineConfig({
-  base: '/ead-approval-countdown/',
+  base: '/until/',
   plugins: [react()],
 });

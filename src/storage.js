@@ -76,55 +76,60 @@ export function wholeMonthsBetween(from, to) {
 }
 
 export const UNITS = [
-  { key: 'years', label: 'years', short: 'years' },
-  { key: 'months', label: 'months', short: 'months' },
-  { key: 'weeks', label: 'weeks', short: 'weeks', divisor: 7 * 86400000 },
-  { key: 'days', label: 'days', short: 'days', divisor: 86400000 },
-  { key: 'hours', label: 'hours', short: 'hours', divisor: 3600000 },
-  { key: 'minutes', label: 'minutes', short: 'mins', divisor: 60000 },
-  { key: 'seconds', label: 'seconds', short: 'secs', divisor: 1000 },
+  { key: 'years', label: 'years', short: 'years', one: 'year' },
+  { key: 'months', label: 'months', short: 'months', one: 'month' },
+  { key: 'weeks', label: 'weeks', short: 'weeks', one: 'week', divisor: 7 * 86400000 },
+  { key: 'days', label: 'days', short: 'days', one: 'day', divisor: 86400000 },
+  { key: 'hours', label: 'hours', short: 'hours', one: 'hour', divisor: 3600000 },
+  { key: 'minutes', label: 'minutes', short: 'mins', one: 'minute', divisor: 60000 },
+  { key: 'seconds', label: 'seconds', short: 'secs', one: 'second', divisor: 1000 },
 ];
 
 const toDate = (t) => (t instanceof Date ? t : new Date(t));
 
-const plural = (word, n) => (n === 1 ? word.replace(/s$/, '') : word);
+const name = (unit, n) => (n === 1 ? unit.one : unit.label);
 
-// Total whole `unit`s between now and the target, plus what is left over
-// expressed in the next smaller unit: a 13-month gap reads "1 year 1 month"
-// on the years card and "13 months 2 weeks" on the months card.
-export function unitValues(index, now, target) {
+// Whole `unit`s between now and the target, and the moment that many whole
+// units lands on (the point the remainder is measured from).
+function totalAt(index, from, to) {
   const unit = UNITS[index];
-  const from = toDate(now);
-  const to = toDate(target);
-
-  let value;
-  let anchor;
   if (unit.key === 'years') {
-    value = Math.floor(wholeMonthsBetween(from, to) / 12);
-    anchor = addMonths(from, value * 12);
-  } else if (unit.key === 'months') {
-    value = wholeMonthsBetween(from, to);
-    anchor = addMonths(from, value);
-  } else {
-    value = Math.floor(Math.max(to - from, 0) / unit.divisor);
-    anchor = new Date(from.getTime() + value * unit.divisor);
+    const value = Math.floor(wholeMonthsBetween(from, to) / 12);
+    return { value, anchor: addMonths(from, value * 12) };
   }
+  if (unit.key === 'months') {
+    const value = wholeMonthsBetween(from, to);
+    return { value, anchor: addMonths(from, value) };
+  }
+  const value = Math.floor(Math.max(to - from, 0) / unit.divisor);
+  return { value, anchor: new Date(from.getTime() + value * unit.divisor) };
+}
 
-  // What is left over, in the largest smaller unit that has anything in it, so a
-  // month-and-a-day gap reads "1 month 1 day" rather than a bare "1 month".
-  let rest = null;
-  for (let i = index + 1; i < UNITS.length && !rest; i += 1) {
-    const u = UNITS[i];
-    const v = u.key === 'months'
-      ? wholeMonthsBetween(anchor, to)
-      : Math.floor(Math.max(to - anchor, 0) / u.divisor);
-    if (v > 0) rest = { v, label: plural(u.short, v) };
-  }
-  return { value, label: plural(unit.label, value), rest };
+// The number on the card at `index`, with its label: each unit is its own total,
+// so a 13-month gap is "1 year" here and "13 months" one card down.
+export function unitValues(index, now, target) {
+  const { value } = totalAt(index, toDate(now), toDate(target));
+  return { value, label: name(UNITS[index], value) };
 }
 
 export function unitTotal(index, now, target) {
   return unitValues(index, now, target).value;
+}
+
+// What's left over after the whole units at `index`, expressed in the largest
+// smaller unit that holds anything: a 13-month gap reads "1 month" under the
+// years card, and a month-and-a-day gap reads "1 day" rather than "0 weeks".
+// Returns null for the smallest unit, which has nothing below it, and an empty
+// string when nothing is left over: the line keeps its space so nothing shifts.
+export function remainderBelow(index, now, target) {
+  if (index >= UNITS.length - 1) return null;
+  const to = toDate(target);
+  const { anchor } = totalAt(index, toDate(now), to);
+  for (let i = index + 1; i < UNITS.length; i += 1) {
+    const v = totalAt(i, anchor, to).value;
+    if (v > 0) return `${fmt(v)} ${name(UNITS[i], v)}`;
+  }
+  return '';
 }
 
 // The gap as a cascade: years, then the months left over, then weeks, and so on.

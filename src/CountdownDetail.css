@@ -84,15 +84,19 @@
   text-align: center;
   width: 100%;
 }
-.remainder {
-  margin-top: 0.5rem;
-  font-weight: 500;
-  font-size: clamp(0.9rem, 4vw, 1.35rem);
-  letter-spacing: 0.06em;
+
+/* Remainder in the next unit down. The height is fixed so the big number stays
+   put when the remainder ticks to zero. */
+.sub-num {
+  font-weight: 400;
+  font-size: clamp(1rem, 4.2vw, 1.45rem);
+  letter-spacing: -0.01em;
   font-variant-numeric: tabular-nums;
   color: var(--sage);
   text-align: center;
-  width: 100%;
+  line-height: 1.4;
+  min-height: 1.4em;
+  margin-top: -0.2rem;
 }
 
 .congrats { display: flex; flex-direction: column; align-items: center; justify-content: center; animation: popIn 1.1s ease both; padding: 0 1.2rem; }
