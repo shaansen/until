@@ -52,6 +52,8 @@ export function timeStringOf(ev) {
   return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
+const toDate = (t) => (t instanceof Date ? t : new Date(t));
+
 // Years and months are calendar quantities, not fixed spans of milliseconds, so
 // they are counted by walking the calendar rather than dividing the gap.
 
@@ -59,7 +61,8 @@ const daysInMonth = (y, m) => new Date(y, m + 1, 0).getDate();
 
 // `from` shifted by n months, clamping the day to the end of the landing month
 // (Jan 31 + 1 month = Feb 28, not Mar 3).
-export function addMonths(from, n) {
+export function addMonths(fromArg, n) {
+  const from = toDate(fromArg);
   const y = from.getFullYear();
   const m = from.getMonth() + n;
   const d = Math.min(from.getDate(), daysInMonth(y, m));
@@ -67,7 +70,9 @@ export function addMonths(from, n) {
 }
 
 // Whole calendar months from `from` to `to`; 0 if `to` is in the past.
-export function wholeMonthsBetween(from, to) {
+export function wholeMonthsBetween(fromArg, toArg) {
+  const from = toDate(fromArg);
+  const to = toDate(toArg);
   let n = (to.getFullYear() - from.getFullYear()) * 12 + (to.getMonth() - from.getMonth());
   if (n < 0) return 0;
   // The month boundary only counts once the day-of-month and time are reached.
@@ -84,8 +89,6 @@ export const UNITS = [
   { key: 'minutes', label: 'minutes', short: 'mins', one: 'minute', divisor: 60000 },
   { key: 'seconds', label: 'seconds', short: 'secs', one: 'second', divisor: 1000 },
 ];
-
-const toDate = (t) => (t instanceof Date ? t : new Date(t));
 
 const name = (unit, n) => (n === 1 ? unit.one : unit.label);
 
