@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { ActionIcon } from '@mantine/core';
 import { IconChevronLeft, IconPencil } from '@tabler/icons-react';
-import { UNITS, targetDate, fmt } from './storage.js';
+import { UNITS, targetDate, fmt, unitTotal, unitValues } from './storage.js';
 import './CountdownDetail.css';
 
 export default function CountdownDetail({ event, onBack, onEdit }) {
@@ -16,9 +16,11 @@ export default function CountdownDetail({ event, onBack, onEdit }) {
   const diff = target.getTime() - now;
   const done = diff <= 0;
 
+  // Only units the gap actually contains, largest first, so a 13-month countdown
+  // opens on years and a two-hour one opens on hours.
   const visible = useMemo(
-    () => UNITS.map((u, i) => i).filter((i) => Math.floor(diff / UNITS[i].divisor) >= 1),
-    [diff],
+    () => UNITS.map((u, i) => i).filter((i) => unitTotal(i, now, target) >= 1),
+    [now, target],
   );
 
   // Keep pos in range as units drop off over time.
@@ -32,8 +34,9 @@ export default function CountdownDetail({ event, onBack, onEdit }) {
     return () => clearInterval(id);
   }, []);
 
-  const current = visible[Math.min(pos, visible.length - 1)] ?? 4;
-  const value = fmt(diff / UNITS[current].divisor);
+  const current = visible[Math.min(pos, visible.length - 1)] ?? UNITS.length - 1;
+  const { value: currentValue, label, rest } = unitValues(current, now, target);
+  const value = fmt(currentValue);
 
   // Fit the big number to the screen.
   useLayoutEffect(() => {
@@ -110,8 +113,9 @@ export default function CountdownDetail({ event, onBack, onEdit }) {
             </div>
 
             <div className="unit-card" key={current} data-dir={dir}>
-              <div className="ornament">{UNITS[current].label}</div>
+              <div className="ornament">{label}</div>
               <div className="big-num" style={{ fontSize: `${fontSize}px` }}>{value}</div>
+              {rest && <div className="remainder">{fmt(rest.v)} {rest.label}</div>}
             </div>
 
             <div className={`chevron bottom ${pos >= visible.length - 1 ? 'hidden' : ''}`}>

@@ -106,7 +106,7 @@ export default function App() {
                 const d = targetDate(ev);
                 const diff = d.getTime() - now;
                 const past = diff <= 0;
-                const parts = past ? null : summarize(diff);
+                const parts = past ? null : summarize(now, d);
                 return (
                   <Card
                     key={ev.id}
