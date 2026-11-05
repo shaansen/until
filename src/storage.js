@@ -170,3 +170,11 @@ export function formatWhen(d) {
     d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
   );
 }
+
+// Shorter form for the list rows: no weekday, and whole hours drop ":00".
+export function formatWhenShort(d) {
+  const time = d.getMinutes() === 0
+    ? d.toLocaleTimeString('en-US', { hour: 'numeric' })
+    : d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' · ' + time;
+}

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Container, Title, Text, Card, Stack, Button, Badge, Group, Box } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 import {
-  loadAll, saveAll, uid, ensureSeeded, targetDate, summarize, formatWhen,
+  loadAll, saveAll, uid, ensureSeeded, targetDate, summarize, formatWhenShort,
 } from './storage.js';
 import CountdownForm from './CountdownForm.jsx';
 import CountdownDetail from './CountdownDetail.jsx';
@@ -127,7 +127,7 @@ export default function App() {
                         <Text fw={600} size="1rem" truncate style={{ letterSpacing: '-0.01em' }} c="green.9">
                           {ev.title}
                         </Text>
-                        <Text size="xs" truncate c="green.5">{formatWhen(d)}</Text>
+                        <Text size="xs" truncate c="green.5">{formatWhenShort(d)}</Text>
                       </Box>
                       {past ? (
                         <Badge color="green" variant="light" style={{ flexShrink: 0 }}>🎉 here</Badge>
