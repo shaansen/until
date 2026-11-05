@@ -101,7 +101,7 @@ export default function App() {
               nothing yet — tap <b>＋ new</b> to begin counting.
             </Text>
           ) : (
-            <Stack gap="md">
+            <Stack gap={8}>
               {sorted.map((ev) => {
                 const d = targetDate(ev);
                 const diff = d.getTime() - now;
@@ -110,8 +110,9 @@ export default function App() {
                 return (
                   <Card
                     key={ev.id}
-                    radius="lg"
-                    padding="lg"
+                    radius="md"
+                    px="md"
+                    py={10}
                     onClick={() => setView({ mode: 'detail', id: ev.id })}
                     style={{
                       cursor: 'pointer',
@@ -121,27 +122,28 @@ export default function App() {
                       WebkitBackdropFilter: 'blur(6px)',
                     }}
                   >
-                    {past ? (
-                      <Group justify="space-between" align="flex-start">
-                        <Text fw={700} size="1.8rem" c="green.4">🎉 here</Text>
-                        <Badge color="green" variant="light">done</Badge>
-                      </Group>
-                    ) : (
-                      <Group gap="md" align="baseline">
-                        {parts.map((p, i) => (
-                          <Text key={i} component="span" fw={700} style={{ fontSize: '1.85rem', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }} c="green.8">
-                            {p.v.toLocaleString('en-US')}
-                            <Text component="span" fw={500} size="0.7rem" c="green.6" ml={3} style={{ letterSpacing: '0.06em', textTransform: 'uppercase' }}>
-                              {p.name}{p.v === 1 ? '' : 's'}
+                    <Group justify="space-between" align="center" wrap="nowrap" gap="sm">
+                      <Box style={{ minWidth: 0, flex: 1 }}>
+                        <Text fw={600} size="1rem" truncate style={{ letterSpacing: '-0.01em' }} c="green.9">
+                          {ev.title}
+                        </Text>
+                        <Text size="xs" truncate c="green.5">{formatWhen(d)}</Text>
+                      </Box>
+                      {past ? (
+                        <Badge color="green" variant="light" style={{ flexShrink: 0 }}>🎉 here</Badge>
+                      ) : (
+                        <Group gap={8} align="baseline" wrap="nowrap" style={{ flexShrink: 0 }}>
+                          {parts.map((p, i) => (
+                            <Text key={i} component="span" fw={700} style={{ fontSize: '1.35rem', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }} c="green.8">
+                              {p.v.toLocaleString('en-US')}
+                              <Text component="span" fw={500} size="0.62rem" c="green.6" ml={2} style={{ letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                                {p.name}{p.v === 1 ? '' : 's'}
+                              </Text>
                             </Text>
-                          </Text>
-                        ))}
-                      </Group>
-                    )}
-                    <Text fw={600} size="1.3rem" mt="xs" style={{ letterSpacing: '-0.01em' }} c="green.9">
-                      {ev.title}
-                    </Text>
-                    <Text size="sm" mt={4} c="green.5">{formatWhen(d)}</Text>
+                          ))}
+                        </Group>
+                      )}
+                    </Group>
                   </Card>
                 );
               })}
